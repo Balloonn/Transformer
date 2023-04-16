@@ -3,7 +3,7 @@ from Layers.clone import clones
 
 
 class Encoder(nn.Module):
-    def __init__(self, encoder_layer):
+    def __init__(self, n, encoder_layer):
         super(Encoder, self).__init__()
         self.encoder_layers = clones(encoder_layer, n)
 
