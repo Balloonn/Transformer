@@ -2,6 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
+
 class PostionalEncoding(nn.Module):
     def __init__(self, dim, dropout, max_len=5000):
         if dim % 2 != 0:

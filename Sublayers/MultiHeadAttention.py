@@ -15,6 +15,7 @@ def self_attention(q, k, v, dropout=None, mask=None):
         self_attn = dropout(self_attn, p=dropout)
     return torch.matmul(self_attn, v), self_attn
 
+
 class MultiHeadAttention(nn.Module):
     def __init__(self, head, d_model, dropout=0.1):
         super(MultiHeadAttention, self).__init__()

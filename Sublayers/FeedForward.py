@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from LayerNorm import LayerNorm
 
+
 class FeedForward(nn.Module):
     def __init__(self, d_model, d_ff, dropout=0.1):
         super(FeedForward, self).__init__()
