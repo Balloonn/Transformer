@@ -1,5 +1,5 @@
 import torch.nn as nn
-import numpy as np
+import torch
 
 
 class WordEmbedding(nn.Module):
@@ -9,4 +9,4 @@ class WordEmbedding(nn.Module):
         self.embedding = nn.Embedding(vocab_size, d_model)
 
     def forward(self, x):
-        return self.embedding(x) * np.sqrt(self.d_model)
+        return self.embedding(x) * torch.sqrt(self.d_model)

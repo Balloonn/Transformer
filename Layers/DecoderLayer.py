@@ -10,7 +10,7 @@ class DecoderLayer(nn.Module):
         self.feed_forward = feed_forward
         self.sublayer_connections = clones(SublayerConnection(d_model, dropout), 3)
 
-    def forward(self, x, memory, trg_mask):
-        first_x = self.sublayer_connections[0](x, lambda first_x_attn: self.attn(x, x, x, trg_mask))
-        second_x = self.sublayer_connections[1](first_x, lambda second_x_attn: self.attn(x, memory, memory, None))
+    def forward(self, x, memory, src_mask=None, trg_mask=None):
+        first_x = self.sublayer_connections[0](x, lambda first_x_attn: self.attn(x, x, x, src_mask))
+        second_x = self.sublayer_connections[1](first_x, lambda second_x_attn: self.attn(x, memory, memory, trg_mask))
         return self.sublayer_connections[2](second_x, self.feed_forward())

@@ -10,6 +10,6 @@ class EncoderLayer(nn.Module):
         self.feed_forward = feed_forward
         self.sublayer_connections = clones(SublayerConnection(d_model, dropout), 2)
 
-    def forward(self, x, mask):
-        first_x = self.sublayer_connections[0](x, lambda x_attn: self.attn(x, x, x, mask))
+    def forward(self, x, src_mask):
+        first_x = self.sublayer_connections[0](x, lambda x_attn: self.attn(x, x, x, src_mask))
         return self.sublayer_connections[1](first_x, self.feed_forward())
