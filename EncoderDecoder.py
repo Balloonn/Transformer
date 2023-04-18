@@ -6,18 +6,15 @@ import Encoder, Decoder, Generator
 import copy as c
 
 
-class Transformer(nn.Module):
-    def __init__(self, src_vocab, trg_vocab, d_model, d_ff, n_heads, n_layers, dropout, device='cuda'):
-        super(Transformer, self).__init__()
-        self.device = device
-        attn = MultiHeadAttention(n_heads, d_model, dropout)
-        feed_forward = FeedForward(d_model, d_ff, dropout)
-        self.src_embed = WordEmbedding(src_vocab, d_model)
-        self.trg_embed = WordEmbedding(trg_vocab, d_model)
-        self.pos_embed = PositionalEncoding(d_model, dropout)
-        self.encoder = Encoder(n_layers, EncoderLayer(d_model, c.deepcopy(attn), c.deepcopy(feed_forward), dropout))
-        self.decoder = Decoder(n_layers, DecoderLayer(d_model, c.deepcopy(attn), c.deepcopy(feed_forward), dropout))
-        self.generator = Generator(d_model, trg_vocab)
+class EncoderDecoder(nn.Module):
+    def __init__(self, encoder, decoder, src_embed, trg_embed, pos_embed, generator):
+        super(EncoderDecoder, self).__init__()
+        self.encoder = encoder
+        self.decoder = decoder
+        self.src_embed = src_embed
+        self.trg_embed = trg_embed
+        self.pos_embed = pos_embed
+        self.generator = generator
 
     def encode(self, src, src_mask):
         x = self.src_embed(src)

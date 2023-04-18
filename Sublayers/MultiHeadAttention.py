@@ -32,6 +32,8 @@ class MultiHeadAttention(nn.Module):
 
     def forward(self, q, k, v, mask=None):
         # q: batch * seq_len * dim
+        if mask is not None:
+            mask.unsqueeze(1)
         batch = q.size(0)
         q = self.linear_q(q).view(batch, -1, self.head, self.d_k).transpose(1, 2)
         k = self.linear_k(k).view(batch, -1, self.head, self.d_k).transpose(1, 2)
