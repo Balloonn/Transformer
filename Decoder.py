@@ -1,7 +1,5 @@
-import torch
 import torch.nn as nn
-from utils import clones, SublayerConnection
-import numpy as np
+from utils import clones, SublayerConnection, subsequent_mask
 import matplotlib.pyplot as plt
 
 
@@ -27,12 +25,6 @@ class Decoder(nn.Module):
         for layer in self.decoder_layers:
             x = layer(x, memory, trg_mask)
         return x
-
-
-def subsequent_mask(size):
-    attn_shape = (1, size, size)
-    mask = np.triu(np.ones(attn_shape), k=1).astype('uint8')
-    return torch.from_numpy(mask) == 0
 
 
 if __name__ == '__main__':

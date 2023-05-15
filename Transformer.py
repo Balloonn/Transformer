@@ -31,8 +31,7 @@ class EncoderDecoder(nn.Module):
         x = self.decoder(x, memory, trg_mask)
         return x
 
-    def forward(self, src, trg, mask):
-        src_mask, trg_mask = mask
+    def forward(self, src, trg, src_mask, trg_mask):
         encoder_outputs = self.encode(src, src_mask)
         decoder_outputs = self.decode(trg, encoder_outputs, trg_mask)
         outputs = self.generator(decoder_outputs)

@@ -31,15 +31,15 @@ class MultiHeadAttention(nn.Module):
         self.attn_softmax = None
 
     def forward(self, q, k, v, mask=None):
-        # q: batch * seq_len * dim
-        if mask is not None:
-            mask.unsqueeze(1)
-        batch = q.size(0)
-        q = self.linear_q(q).view(batch, -1, self.head, self.d_k).transpose(1, 2)
-        k = self.linear_k(k).view(batch, -1, self.head, self.d_k).transpose(1, 2)
-        v = self.linear_k(v).view(batch, -1, self.head, self.d_k).transpose(1, 2)
+        # q: batches * batch_size * seq_len
+        if mask is not None:  # batches * batch_size * seq_len
+            mask.unsqueeze(1)  # batches * head_num * batch_size * d_k
+        batches = q.size(0)
+        q = self.linear_q(q).view(batches, -1, self.head, self.d_k).transpose(1, 2)
+        k = self.linear_k(k).view(batches, -1, self.head, self.d_k).transpose(1, 2)
+        v = self.linear_k(v).view(batches, -1, self.head, self.d_k).transpose(1, 2)
         x, self.attn_softmax = self_attention(q, k, v, dropout=self.dropout, mask=mask)
-        x = x.transpose(1,2).contiguous().view(batch, -1, self.head * self.d_k)
+        x = x.transpose(1, 2).contiguous().view(batches, -1, self.head * self.d_k)
         return self.linear_out(x)
 
 
