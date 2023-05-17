@@ -8,4 +8,4 @@ class Generator(nn.Module):
         self.linear = nn.Linear(d_model, trg_vocab)
 
     def forward(self, x):
-        return F.softmax(self.linear(x), dim=-1)
+        return F.log_softmax(self.linear(x), dim=-1)

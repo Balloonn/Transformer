@@ -1,18 +1,18 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import numpy as np
+import math
+from utils import clones
 
 
 def self_attention(q, k, v, dropout=None, mask=None):
-    d_k = k.size(-1)
-    scores = torch.matmul(q, k.transpose(-2, -1)) / np.sqrt(d_k)
+    d_k = q.size(-1)
+    scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(d_k)
     if mask is not None:
-        mask.cuda()
-        scores = scores.masked_filled(mask == 0, -1e9)
+        scores = scores.masked_fill(mask == 0, -1e9)
     self_attn = F.softmax(scores, dim=-1)
     if dropout is not None:
-        self_attn = dropout(self_attn, p=dropout)
+        self_attn = dropout(self_attn)
     return torch.matmul(self_attn, v), self_attn
 
 
@@ -22,18 +22,17 @@ class MultiHeadAttention(nn.Module):
         assert (d_model % head == 0)
         self.d_k = d_model // head
         self.head = head
-        self.d_model = d_model
         self.linear_q = nn.Linear(d_model, d_model)
         self.linear_k = nn.Linear(d_model, d_model)
         self.linear_v = nn.Linear(d_model, d_model)
         self.linear_out = nn.Linear(d_model, d_model)
-        self.dropout = dropout
+        self.dropout = nn.Dropout(p=dropout)
         self.attn_softmax = None
 
     def forward(self, q, k, v, mask=None):
         # q: batches * batch_size * seq_len
         if mask is not None:  # batches * batch_size * seq_len
-            mask.unsqueeze(1)  # batches * head_num * batch_size * d_k
+            mask = mask.unsqueeze(1)  # batches * head_num * batch_size * d_k
         batches = q.size(0)
         q = self.linear_q(q).view(batches, -1, self.head, self.d_k).transpose(1, 2)
         k = self.linear_k(k).view(batches, -1, self.head, self.d_k).transpose(1, 2)
