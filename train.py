@@ -18,7 +18,7 @@ class Batch:
 
     @staticmethod
     def make_std_mask(trg, pad):
-        trg_mask = (trg != pad).unsqueeze(-2)  # batches * batch_size * seq_len
+        trg_mask = torch.Tensor((trg != pad)).int().unsqueeze(-2)  # batches * batch_size * seq_len
         trg_mask = trg_mask & Variable(subsequent_mask(trg.size(-1)).type_as(trg_mask.data))
         return trg_mask
 
@@ -74,9 +74,9 @@ if __name__ == "__main__":
         model.eval()
         loss = run_epoch(data_gen(V, 10, 100), model, LossCompute(model.generator, criterion, model_opt))
         if loss < losslast:
-            if not os.path.exists("model"):
-                os.mkdir("model")
-            torch.save(model.state_dict(), 'model\copytask.pkl')
+            if not os.path.exists("parameters"):
+                os.mkdir("parameters")
+            torch.save(model.state_dict(), 'parameters/params.pkl')
             print("update best model")
             losslast = loss
         print("epoch: %d, loss: %f" % (epoch, loss))
@@ -84,5 +84,5 @@ if __name__ == "__main__":
     model.eval()
     src = Variable(torch.LongTensor([[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]))
     src_mask = Variable(torch.ones(1, 1, 10))
-    model.load_state_dict(torch.load('model/copytask.pkl'))
+    model.load_state_dict(torch.load('parameters/params.pkl'))
     print(greedy_decode(model, src, src_mask, max_len=10, start_symbol=4))
