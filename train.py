@@ -9,7 +9,7 @@ import os
 class Batch:
     def __init__(self, src, trg=None, pad=0):
         self.src = src  # batch_size * seq_len
-        self.src_mask = (src != pad).unsqueeze(-2)  # batches * batch_size * seq_len
+        self.src_mask = torch.Tensor((src != pad)).int().unsqueeze(-2)  # batches * batch_size * seq_len
         if trg is not None:
             self.trg = trg[:, :-1]
             self.trg_pred = trg[:, 1:]
